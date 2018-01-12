@@ -57,6 +57,7 @@ namespace pingpanther
         {
             foreach (var host in hostname)
                 {
+                Console.WriteLine("Beginning ping on " + host);
                 using (Ping ping = new Ping())
                 {
                     try
@@ -64,16 +65,17 @@ namespace pingpanther
                         PingReply reply = ping.Send(host, 100);
                         if (reply.Status == IPStatus.Success)
                         {
-                            Console.WriteLine("Pinged " + hostname + " at " + reply.Address + " Successfully. \t Time: " + reply.RoundtripTime + " ms \r\n");
-                            log.Info("Pinged " + hostname + ", " + reply.Address + " responded successfully in " + reply.RoundtripTime + " ms \r\n");
+                            Console.WriteLine("Pinged " + host + " at " + reply.Address + " Successfully. \t Time: " + reply.RoundtripTime + " ms \r\n");
+                            log.Info("Pinged " + host + ", " + reply.Address + " responded successfully in " + reply.RoundtripTime + " ms \r\n");
                         }
-                        else if (reply.Status == IPStatus.TimedOut) //Problem with the pings to be too frequently timed out, so a "fix" or "hack" around this.
+                        else if (reply.Status == IPStatus.TimedOut) 
                         {
                             Console.WriteLine("Connection time out. Connection retried for " + hostname + "\r\n"); }
                         else
                         {
-                            Console.WriteLine("Couldn't ping " + hostname + "; Error: " + reply.Status + ".\r\n");
+                            Console.WriteLine("Couldn't ping " + host + "; Error: " + reply.Status + ".\r\n");
                             Console.WriteLine(reply.Status);
+                            //BuildEmailMessage(host);
                         }
                     }
                     catch (Exception ex)
@@ -103,15 +105,12 @@ namespace pingpanther
             }
         }
 
-        public static void BuildEmailMessage()
+        public static void BuildEmailMessage(string host)
         {
             var mail = new MailMessage();
             var smtp = new SmtpClient();
             var body = "<p>" + ReadSetting("body") + "<br><br>";
-            foreach (var result in StalledFiles)
-            {
-                body += Path.GetFileName(result) + " : Created on " + File.GetCreationTime(result) + "<br>";
-            }
+            body += "Host: " + host;
             body += "</p>";
 
             try
@@ -134,7 +133,7 @@ namespace pingpanther
             {
                 log.Info("Sending notification to distribution list");
                 mail.From = new MailAddress(ReadSetting("from"));
-                mail.Subject = ReadSetting("subject");
+                mail.Subject = ReadSetting("subject") + host;
                 mail.IsBodyHtml = true;
                 mail.Body = string.Format(body);
                 smtp.Port = int.Parse(ReadSetting("port"));
@@ -164,15 +163,5 @@ namespace pingpanther
             }
             //mail.Dispose();
         }
-
-        //public static List<string> GetServers()
-        //{
-        //    public string Hosts = ReadSetting("hosts");
-        //}
-
-        //public static bool PingServer()
-        //{
-
-        //}
     }
 }
