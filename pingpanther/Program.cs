@@ -53,11 +53,11 @@ namespace pingpanther
             MachineList = input.Split(delimiterChars).ToList();
         }
 
-        static void Ping(List<string> hostname) //ping function
+        static void Ping(List<string> hostname) 
         {
             foreach (var host in hostname)
                 {
-                Console.WriteLine("Beginning ping on " + host);
+                log.Info("Beginning ping on " + host);
                 using (Ping ping = new Ping())
                 {
                     try
@@ -65,16 +65,16 @@ namespace pingpanther
                         PingReply reply = ping.Send(host, 100);
                         if (reply.Status == IPStatus.Success)
                         {
-                            Console.WriteLine("Pinged " + host + " at " + reply.Address + " Successfully. \t Time: " + reply.RoundtripTime + " ms \r\n");
                             log.Info("Pinged " + host + ", " + reply.Address + " responded successfully in " + reply.RoundtripTime + " ms \r\n");
                         }
                         else if (reply.Status == IPStatus.TimedOut) 
                         {
-                            Console.WriteLine("Connection time out. Connection retried for " + hostname + "\r\n"); }
+                            log.Warn("Connection time out.Connection retried for " + hostname + "\r\n");
+                        }
                         else
                         {
-                            Console.WriteLine("Couldn't ping " + host + "; Error: " + reply.Status + ".\r\n");
-                            Console.WriteLine(reply.Status);
+                            log.Error("Couldn't ping " + host + "; Error: " + reply.Status + ".\r\n");
+                            log.Error(reply.Status);
                             //BuildEmailMessage(host);
                         }
                     }
