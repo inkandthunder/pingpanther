@@ -15,13 +15,14 @@ namespace pingpanther
     class Program
     {
         public static NameValueCollection AppSettings { get; }
-        public static List<string> ServerList = new List<string> { };
+        public static List<string> MachineList = new List<string> { };
         private static readonly ILog log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
         static void Main(string[] args)
         {
             Loopback();
-            Ping("csstech");
+            StringSplitter(ReadSetting("hosts"));
+            Ping(MachineList);
             Console.ReadKey();
         }
 
@@ -46,30 +47,39 @@ namespace pingpanther
             }
         }
 
-        static void Ping(string hostname) //ping function
+        static void StringSplitter(string input)
         {
-            using (Ping ping = new Ping())
-            {
-                try
+            char[] delimiterChars = { ' ', ',', '.', ':', ';', '\t' };
+            MachineList = input.Split(delimiterChars).ToList();
+        }
+
+        static void Ping(List<string> hostname) //ping function
+        {
+            foreach (var host in hostname)
                 {
-                    PingReply reply = ping.Send(hostname, 100);
-                    if (reply.Status == IPStatus.Success)
-                    {
-                        Console.WriteLine("Pinged " + hostname + " at " + reply.Address + " Successfully. \t Time: " + reply.RoundtripTime + " ms \r\n");
-                        log.Info("Pinged " + hostname + ", " + reply.Address + " responded successfully in " + reply.RoundtripTime + " ms \r\n");
-                    }
-                    else if (reply.Status == IPStatus.TimedOut) //Problem with the pings to be too frequently timed out, so a "fix" or "hack" around this.
-                    {
-                        Console.WriteLine("Connection time out. Connection retried for " + hostname + "\r\n");}
-                    else
-                    {
-                        Console.WriteLine("Couldn't ping " + hostname + "; Error: " + reply.Status + ".\r\n");
-                        Console.WriteLine(reply.Status);
-                    }
-                }
-                catch (Exception ex)
+                using (Ping ping = new Ping())
                 {
-                    log.Error(ex);
+                    try
+                    {
+                        PingReply reply = ping.Send(host, 100);
+                        if (reply.Status == IPStatus.Success)
+                        {
+                            Console.WriteLine("Pinged " + hostname + " at " + reply.Address + " Successfully. \t Time: " + reply.RoundtripTime + " ms \r\n");
+                            log.Info("Pinged " + hostname + ", " + reply.Address + " responded successfully in " + reply.RoundtripTime + " ms \r\n");
+                        }
+                        else if (reply.Status == IPStatus.TimedOut) //Problem with the pings to be too frequently timed out, so a "fix" or "hack" around this.
+                        {
+                            Console.WriteLine("Connection time out. Connection retried for " + hostname + "\r\n"); }
+                        else
+                        {
+                            Console.WriteLine("Couldn't ping " + hostname + "; Error: " + reply.Status + ".\r\n");
+                            Console.WriteLine(reply.Status);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        log.Error(ex);
+                    }
                 }
             }
         }
