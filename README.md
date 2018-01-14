@@ -2,6 +2,8 @@
 
 ## Getting Started
 
+> __Setup credentials and base url__
+
 **Add the following block to your .config file**:
 
 ```xml
@@ -17,6 +19,14 @@
 </appSettings>
 ```
 Host keys can be limited by `space`, `,`, `.`, `:`, `;`, or `\t` 
+
+> __Examples__
+
+__TODO__
+
+```C#	
+TODO
+```
 
 ## License
 
