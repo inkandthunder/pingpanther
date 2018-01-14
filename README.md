@@ -16,7 +16,7 @@
   <add key="body" value="The following host was detected as being down. Please investigate:" />
 </appSettings>
 ```
-Host keys can be limited by 'space', ',', '.', ':', ';', or '\t' 
+Host keys can be limited by `space`, `,`, `.`, `:`, `;`, or `\t` 
 
 ## License
 
