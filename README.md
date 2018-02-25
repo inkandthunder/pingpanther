@@ -1,5 +1,12 @@
 # pingpanther
 
+### Status
+|System|Status|
+|--|--|
+|Appveyor|[![Build status](https://ci.appveyor.com/api/projects/status/c5siwow7t6ekmw5f?svg=true)](https://ci.appveyor.com/project/inkandthunder/pingpanther)|
+|Travis|![Travis Build Status](https://travis-ci.org/inkandthunder/pingpanther.svg?branch=master)|
+
+
 ## Getting Started
 
 > __Setup credentials and base url__
